@@ -2,10 +2,10 @@
 from __future__ import annotations
 
 import datetime
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from .exceptions import (
-    ForbiddenOperatonError,
+    ForbiddenOperationError,
     OperationError,
     OutOfStockError,
 )
@@ -16,12 +16,12 @@ class Customer:
     id: int
     name: str
     lastname: str
-    rental_history: list = None
+    rental_history: list = field(default_factory=lambda: [])
     active_rental: Rental = None
 
     def set_active_rental(self, rental: Rental):
         if self.active_rental:
-            raise ForbiddenOperatonError(
+            raise ForbiddenOperationError(
                 "Customer can't have a second active rental"
             )
         self.active_rental = rental
@@ -39,6 +39,10 @@ class Movie:
     stock: int
     rented: int
     price_per_day: float
+
+    @property
+    def available(self):
+        return self.stock - self.rented
 
     def add_to_inventory(self, number: int):
         self.stock = self.stock + number
@@ -62,8 +66,8 @@ class Movie:
         self.rented = self.rented - 1
 
     def get_rent_price(self, *, days: int):
-        if days < 1:
-            raise ForbiddenOperatonError('Rent days must be greater than one')
+        if days <= 0:
+            raise ForbiddenOperationError('days must be greater than zero')
         return self.price_per_day * days
 
 
@@ -74,7 +78,7 @@ class Rental:
     rent_date: datetime.datetime
     days: int
     return_date: datetime.datetime = None
-    late_fee: float = 0
+    late_fee: float = 0.00
 
     @property
     def returned(self):
@@ -83,9 +87,13 @@ class Rental:
     @property
     def amount(self):
         return sum([
-            movie.get_rent_price(self.days)
+            movie.get_rent_price(days=self.days)
             for movie in self.movies
         ])
+
+    @property
+    def total_amount(self):
+        return self.amount + self.late_fee
 
     def return_movies(self, return_date: datetime.datetime):
         if return_date < self.rent_date:
@@ -98,6 +106,6 @@ class Rental:
         if rented_time > expected_time:
             extra_time = rented_time - expected_time
             self.late_fee = sum([
-                movie.get_rent_price(extra_time.days)
+                movie.get_rent_price(days=extra_time.days)
                 for movie in self.movies
             ])

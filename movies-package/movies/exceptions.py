@@ -1,7 +1,7 @@
 """Error definitions"""
 
 
-class ForbiddenOperatonError(Exception):
+class ForbiddenOperationError(Exception):
     """Error triggered when a operation is not allowed"""
 
 
