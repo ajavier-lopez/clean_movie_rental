@@ -2,31 +2,11 @@ import datetime
 import unittest
 
 from movies import exceptions
-from movies.entities import (
-    Customer,
-    Movie,
-    Rental,
+from movies.tests.mocks import (
+    _create_customer,
+    _create_movie,
+    _create_rental,
 )
-
-
-def _create_customer(i=1):
-    return Customer(id=i, name=f'test{i}', lastname=f'customer{i}')
-
-
-def _create_movie(i=1, stock=5, price=2.99):
-    return Movie(
-        id=i,
-        name=f'test movie {i}',
-        stock=stock,
-        price_per_day=price,
-    )
-
-
-def _create_rental(movies=None, customer=None, days=3, date=None):
-    customer = customer or _create_customer()
-    movies = movies or [_create_movie()]
-    date = date or datetime.datetime.now()
-    return Rental(movies=movies, customer=customer, rent_date=date, days=days)
 
 
 class TestCustomer(unittest.TestCase):
