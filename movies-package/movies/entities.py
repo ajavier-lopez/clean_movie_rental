@@ -37,8 +37,8 @@ class Movie:
     id: int
     name: str
     stock: int
-    rented: int
     price_per_day: float
+    rented: int = 0
 
     @property
     def available(self):
