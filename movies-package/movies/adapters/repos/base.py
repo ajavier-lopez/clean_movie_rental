@@ -1,11 +1,13 @@
 from __future__ import annotations
-from typing import Callable
 
-from ..entities import Movie
+from collections.abc import Callable
+
+from movies.entities import Movie
+from movies.adapters.repos.abstract import AbstractBaseRepo
 
 
-class MoviesRepo:
-    def __init__(self, movies: dict[Movie] = None):
+class MoviesBaseRepo(AbstractBaseRepo):
+    def __init__(self, movies: dict[int, Movie] = None):
         self.movies = movies or {}
 
     def _generate_id(self):
@@ -32,5 +34,5 @@ class MoviesRepo:
             movie.id = self._generate_id()
         self.movies[movie.id] = movie
 
-    def delete(self, movie: Movie):
+    def remove(self, movie: Movie):
         del self.movies[movie.id]

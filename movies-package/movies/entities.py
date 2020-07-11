@@ -4,7 +4,7 @@ from __future__ import annotations
 import datetime
 from dataclasses import dataclass, field
 
-from .exceptions import (
+from movies.exceptions import (
     ForbiddenOperationError,
     OperationError,
     OutOfStockError,

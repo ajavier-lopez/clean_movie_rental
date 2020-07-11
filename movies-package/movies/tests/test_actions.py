@@ -1,14 +1,15 @@
 import unittest
 
-from movies import actions, settings
-from movies.adapters.repository import MoviesRepo
+from movies import actions
+from movies.adapters import repos
+from movies.adapters.repos.base import MoviesBaseRepo
 from movies.tests.mocks import _create_movie, _get_mock_movies
 
 
 class TestCRUDMovies(unittest.TestCase):
     def setUp(self):
         self.movies = _get_mock_movies(number=5)
-        settings.movies_repository = MoviesRepo(self.movies)
+        repos.movies = MoviesBaseRepo(self.movies)
 
     def test_list_available_movies(self):
         movies = actions.list_available_movies()
@@ -21,8 +22,8 @@ class TestCRUDMovies(unittest.TestCase):
 
     def test_add_movie(self):
         id_ = len(self.movies) + 1
-        self.assertNotIn(id_, settings.movies_repository.all())
+        self.assertNotIn(id_, repos.movies.all())
 
         movie = _create_movie(i=id_)
         actions.add_movie(movie)
-        self.assertIn(id_, settings.movies_repository.all())
+        self.assertIn(id_, repos.movies.all())
